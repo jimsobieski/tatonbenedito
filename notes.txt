@@ -1,0 +1,2 @@
+modifier diagramme de classe:
+- mot contient collection de case et non une collection de lettres

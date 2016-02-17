@@ -21,6 +21,13 @@ public class Case {
 			this.use=false;
 	}
 	
+        public boolean equals(Case c){
+            if(this.getX()==c.getX() && this.getY()==c.getY() && this.getNumRegle()==c.getNumRegle()){
+                return true;
+            }
+            return false;
+        }
+        
 	public void addLettre(Lettre l){
 		this.lettre=l;
 	}
@@ -32,6 +39,13 @@ public class Case {
 	public void setLettre(Lettre lettre) {
 		this.lettre = lettre;
 	}
+        
+        public boolean hasLettre(){
+            if(this.getLettre()!=null){
+                return true;
+            }
+            return false;
+        }
 
 	public int getX() {
 		return x;

@@ -3,22 +3,28 @@ import java.util.ArrayList;
 
 public class Mot {
 
-	private ArrayList<Lettre> lesLettres;
+	private ArrayList<Case> lesCases;
 	private Case cd;
 	private Case cf;
 	
 	public Mot(){
-		this.lesLettres=new ArrayList<Lettre>();
+		this.lesCases=new ArrayList<Case>();
 	}
-	public Mot(ArrayList<Lettre> l){
-		this.lesLettres=l;
+	public Mot(ArrayList<Case> l){
+		this.lesCases=l;
 	}
-	public ArrayList<Lettre> getLesLettres() {
-		return lesLettres;
+	public ArrayList<Case> getLesCases() {
+		return lesCases;
 	}
-	public void setLesLettres(ArrayList<Lettre> lesLettres) {
-		this.lesLettres = lesLettres;
+	public void setLesCases(ArrayList<Case> lesCases) {
+		this.lesCases = lesCases;
 	}
+        
+        public boolean searchCase(Case c){
+            if(this.getLesCases().contains(c)){
+                return true;
+            }
+            return false;
+        }
 	
-
 }

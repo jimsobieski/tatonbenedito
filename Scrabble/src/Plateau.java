@@ -1,18 +1,21 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
 public class Plateau {
 
 	private ArrayList<String> lesRegles;
 	private ArrayList<Case> lesCases;
 	private ArrayList<Mot> lesMots;
+        private Sac sac;
+        private boolean first;
 	
 	public Plateau(){
 		this.lesRegles=this.creerRegles();
 		this.lesCases=new ArrayList<Case>();
 		this.lesCases=this.creerCases();	
 		this.lesMots=new ArrayList<Mot>();
+                this.sac=new Sac();
+                this.first=true;
 	}
 	
 	public ArrayList<Case> creerCases(){
@@ -40,6 +43,7 @@ public class Plateau {
 					lc.add(new Case(i,j,1));
 					
 				}
+                                //Case starter
 				else if((i==7 && j==7)){
 					lc.add(new Case(i,j,5));
 				}
@@ -62,8 +66,7 @@ public class Plateau {
 		r.add(4,"mot x3");
 		r.add(5,"starter");
 		return r;
-	}
-	
+	}	
 	
 	public ArrayList<String> getLesRegles() {
 		return lesRegles;
@@ -84,13 +87,45 @@ public class Plateau {
 	public ArrayList<Mot> getLesMots() {
 		return lesMots;
 	}
+        
+        public Sac getSac(){
+            return this.sac;
+        }
+        
+        public boolean isFirst() {
+        return first;
+    }
 
-	public void setLesMots(ArrayList<Mot> lesMots) {
-		this.lesMots = lesMots;
-	}
+        public void setFirst(boolean first) {
+        this.first = first;
+    }
 
 	public String toString(){
 		String s="";
+		String n=System.getProperty("line.separator"); 
+		Iterator<Case> it=this.getLesCases().iterator();
+		int cmp=0;
+		while(it.hasNext()){
+			Case c=it.next();
+                        if(c.hasLettre()){
+                            s+=c.getLettre().getNom()+" ";
+                        }
+                        else{
+                            s+=c.getNumRegle()+" ";
+                        }			
+			if(cmp==14){
+				s+=n;
+				cmp=0;
+			}
+			else{
+				cmp++;
+			}
+		}
+		return s;
+	}
+        
+        public String afficherPlateau(){
+            String s="";
 		String n=System.getProperty("line.separator"); 
 		Iterator<Case> it=this.getLesCases().iterator();
 		int cmp=0;
@@ -106,19 +141,50 @@ public class Plateau {
 			}
 		}
 		return s;
-	}
+        }
 	
 	public boolean ajouterMot(Mot m){
+                if(this.isFirst()){
+                    if(m.searchCase(new Case(7,7,5))){
+                        this.setFirst(false);
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                //On crée un iterator des cases du mot
+                Iterator<Case> it=m.getLesCases().iterator();
+                while (it.hasNext()){
+                    //On recupere chaque case
+                    Case caseMot=it.next();
+                    //On trouve la casePlateau equivalente et on y ajoute la lettre
+                    Case casePlateau=this.inCase(caseMot);
+                    casePlateau.addLettre(caseMot.getLettre());
+                    casePlateau.changeUse(); 
+                    this.getLesMots().add(m);
+                }
 		this.getLesMots().add(m);
 		return true;
 	}
+        
+        public Case inCase(Case c){
+            int cmp=0;
+            Iterator<Case> it=this.getLesCases().iterator();
+            while(it.hasNext()){
+                Case c2=it.next();
+                if(c2.equals(c)){
+                    return c2;
+                }
+            }
+            return null;
+        }
 
 	public static void main(String[] args){
 		
 		Plateau p=new Plateau(); 
-		Iterator<Case> it=p.getLesCases().iterator();
-		System.out.println(p);
-		
+		Sac s=p.getSac();
+                System.out.println(s.piocher(52));
+                System.out.println(s);
 	}
 	
 	

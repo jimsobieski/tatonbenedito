@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package scrabble;
 
 /**
  *
@@ -44,11 +45,7 @@ public class Lettre {
         this.value = value;
     }
             
-    public String toString(){
-        String s;
-        
-        return this.getNom()+" - "+this.getValue();
-    }
+
 }
 
 
