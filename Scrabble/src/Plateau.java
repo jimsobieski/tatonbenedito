@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.swing.JFrame;
 
 public class Plateau {
 
@@ -179,15 +180,5 @@ public class Plateau {
             return null;
         }
 
-	public static void main(String[] args){
-		
-		Plateau p=new Plateau(); 
-		Sac s=p.getSac();
-                System.out.println(s.piocher(52));
-                System.out.println(s);
-	}
 	
-	
-	
-
 }

@@ -44,6 +44,10 @@ public class Joueur {
         this.points = points;
     }
     
+    public void addPoints(int p){
+        this.points+=p;
+    }
+    
     
     
 }

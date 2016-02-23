@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,9 +9,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
 public class Scrabble {
+    
+    private JFrame fenetre;
+    private Plateau plateau;
+    
+    public Scrabble(){
+                this.plateau=new Plateau();
+                this.fenetre = new JFrame();
+                fenetre.setVisible(true);
+                fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                fenetre.setTitle("Scrabble");
+                fenetre.setSize(460,600);
+                fenetre.setResizable(false);
+                fenetre.setLocationRelativeTo(null);     
+                fenetre.setContentPane(new Gconteneur(this.plateau));  
+                
+    }
 	
 	public void motfrancais() throws IOException{
 		try {
@@ -43,7 +62,8 @@ public class Scrabble {
 
 	
 	public static void main(String[] args) throws IOException {
-		
+		Scrabble s=new Scrabble();
+                
 	}
 
 }
