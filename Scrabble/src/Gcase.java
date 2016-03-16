@@ -22,6 +22,7 @@ public class Gcase extends JButton implements MouseListener{
         this.lettre=null;
         this.click=false;
         this.color=ca.getColor();
+        this.setBackground(color);
         this.addMouseListener(this);
     }
 

@@ -25,20 +25,6 @@ public class Gplateau extends JPanel{
                 while(it.hasNext()){
                     Case c=it.next();
                     Gcase dessinCase=new Gcase(c);
-                    switch(c.getNumRegle()){
-                case 0:dessinCase.setBackground(Color.lightGray);
-                    break;
-                case 1:dessinCase.setBackground(Color.cyan);
-                    break;
-                case 2:dessinCase.setBackground(Color.blue);
-                    break;
-                case 3:dessinCase.setBackground(Color.pink);
-                    break;
-                case 4:dessinCase.setBackground(Color.red);
-                    break;
-                case 5:dessinCase.setBackground(Color.pink);
-                    break;
-                    }
                     add(dessinCase);
                 }
     }

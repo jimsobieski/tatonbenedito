@@ -20,46 +20,15 @@ import javax.swing.JPanel;
 
 public class Scrabble {
     
-    private JFrame fenetre;
+    private Gwindow fenetre;
     private Plateau plateau;
+    private ArrayList<Joueur> lesJoueurs;
     
     public Scrabble(){
                 this.plateau=new Plateau();
-                this.fenetre = new JFrame();
-                fenetre.setVisible(true);
-                fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                fenetre.setTitle("Scrabble");
-                fenetre.setSize(700,700);
-                //fenetre.setResizable(false);
-                fenetre.setLocationRelativeTo(null);     
-                //fenetre.setLayout(new GridLayout(15,15,2,2));
-                ArrayList<Case> cs=this.plateau.getLesCases();
-                fenetre.setLayout(new BorderLayout());
-                fenetre.getContentPane().add(new JButton("SCRABBLE"), BorderLayout.NORTH);
-                fenetre.getContentPane().add(new Gmenu(), BorderLayout.WEST);
-                fenetre.getContentPane().add(new Gplateau(cs), BorderLayout.CENTER);
-                
-                Iterator<Case> it=cs.iterator();
-//                while(it.hasNext()){
-//                    Case c=it.next();
-//                    JPanel dessinCase=new JPanel();
-//                    switch(c.getNumRegle()){
-//                case 0:dessinCase.setBackground(Color.lightGray);
-//                    break;
-//                case 1:dessinCase.setBackground(Color.cyan);
-//                    break;
-//                case 2:dessinCase.setBackground(Color.blue);
-//                    break;
-//                case 3:dessinCase.setBackground(Color.pink);
-//                    break;
-//                case 4:dessinCase.setBackground(Color.red);
-//                    break;
-//                case 5:dessinCase.setBackground(Color.pink);
-//                    break;
-//                    }
-//                    fenetre.getContentPane().add(dessinCase, BorderLayout.CENTER);
-//                }
-                   fenetre.setSize(701,700);            
+                this.fenetre = new Gwindow(this.plateau);
+                this.lesJoueurs=new ArrayList<Joueur>();
+                           
     }
 	
 	public void motfrancais() throws IOException{

@@ -102,9 +102,13 @@ public class Plateau {
     }
 
 	public String toString(){
+                
 		String s="";
 		String n=System.getProperty("line.separator"); 
 		Iterator<Case> it=this.getLesCases().iterator();
+                if(!it.hasNext()){
+                    return "que dalle";
+                }
 		int cmp=0;
 		while(it.hasNext()){
 			Case c=it.next();
