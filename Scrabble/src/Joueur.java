@@ -1,3 +1,6 @@
+
+import java.util.ArrayList;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,11 +16,19 @@ public class Joueur {
     private int id;
     private String nom;
     private int points;
+    private Chevalet chevalet;
     
     public Joueur(int i,String n){
         this.id=i;
         this.nom=n;
         this.points=0;
+        this.chevalet=new Chevalet();
+    }
+    
+    public void piocher(Sac s){
+        int nbLettres=this.getChevalet().getNbLettres();
+        ArrayList<Lettre> ls=s.piocher(7-nbLettres);
+        this.chevalet.piocher(ls);
     }
 
     public int getId() {
@@ -46,6 +57,10 @@ public class Joueur {
     
     public void addPoints(int p){
         this.points+=p;
+    }
+
+    public Chevalet getChevalet() {
+        return chevalet;
     }
     
     

@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +18,7 @@ import java.util.Iterator;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
 public class Scrabble {
@@ -23,12 +26,65 @@ public class Scrabble {
     private Gwindow fenetre;
     private Plateau plateau;
     private ArrayList<Joueur> lesJoueurs;
+    private Sac sac;
     
     public Scrabble(){
                 this.plateau=new Plateau();
-                this.fenetre = new Gwindow(this.plateau);
+                this.fenetre = new Gwindow(this.getPlateau());
                 this.lesJoueurs=new ArrayList<Joueur>();
+                this.sac=new Sac();
+                JButton startButton=this.fenetre.getMenu().getStartGame().getStartButton();
+                startButton.addActionListener(new WatchStartButton(this));
                            
+    }
+    
+    public Sac getSac(){
+        return this.getSac();
+    }
+
+    public Gwindow getFenetre() {
+        return fenetre;
+    }
+
+    public Plateau getPlateau() {
+        return plateau;
+    }
+    
+    public ArrayList<Joueur> getLesJoueurs() {
+        return lesJoueurs;
+    }
+
+    public void setLesJoueurs(ArrayList<Joueur> lesJoueurs) {
+        this.lesJoueurs = lesJoueurs;
+    }
+    
+    class WatchStartButton implements ActionListener{
+
+        private Scrabble s;
+        
+        public WatchStartButton(Scrabble s){
+            this.s=s;
+        }
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            GstartGame g=fenetre.getMenu().getStartGame();
+            ArrayList<JTextField> lesNoms=g.getLesJoueurs();
+            int cmp=0;
+            Joueur j;
+            for(int i=0; i<4;i++){
+                JTextField input=lesNoms.get(i);
+                if(!input.getText().isEmpty()){
+                    j=new Joueur(cmp,input.getText());
+                    j.piocher(sac);
+                    s.getLesJoueurs().add(j);
+                    cmp++;
+                }
+                
+            }
+            //Initialise les intefaces joueurs
+            fenetre.getMenu().addJoueurs(s.getLesJoueurs());
+        }
+        
     }
 	
 	public void motfrancais() throws IOException{

@@ -2,6 +2,7 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,9 +26,7 @@ public class Gmenu extends JPanel implements ActionListener{
         this.startGame=new GstartGame();
         this.add(this.startGame); 
         this.game=new Ggame();
-        this.add(this.game);
         this.startGame.getStartButton().addActionListener(new WatchStartButton(this));
-        //this.addActionListener();
     }
 
     @Override
@@ -37,6 +36,11 @@ public class Gmenu extends JPanel implements ActionListener{
 
     public GstartGame getStartGame() {
         return startGame;
+    }
+    
+    public void addJoueurs(ArrayList<Joueur> lj){
+        this.game.addJoueurs(lj);
+        this.add(this.game);
     }
     
     class WatchStartButton implements ActionListener{
@@ -53,7 +57,7 @@ public class Gmenu extends JPanel implements ActionListener{
         
         @Override
         public void actionPerformed(ActionEvent ae) {
-            System.out.println("test");
+            
             cards.next(this.getMenu());
         }
         

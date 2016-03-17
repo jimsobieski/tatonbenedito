@@ -7,7 +7,6 @@ public class Plateau {
 	private ArrayList<String> lesRegles;
 	private ArrayList<Case> lesCases;
 	private ArrayList<Mot> lesMots;
-        private Sac sac;
         private boolean first;
 	
 	public Plateau(){
@@ -15,7 +14,6 @@ public class Plateau {
 		this.lesCases=new ArrayList<Case>();
 		this.lesCases=this.creerCases();	
 		this.lesMots=new ArrayList<Mot>();
-                this.sac=new Sac();
                 this.first=true;
 	}
 	
@@ -88,10 +86,7 @@ public class Plateau {
 	public ArrayList<Mot> getLesMots() {
 		return lesMots;
 	}
-        
-        public Sac getSac(){
-            return this.sac;
-        }
+
         
         public boolean isFirst() {
         return first;

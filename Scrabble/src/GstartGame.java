@@ -28,10 +28,10 @@ public class GstartGame extends JPanel implements ActionListener{
         JTextField j1=new JTextField("Joueur 1");
         this.lesJoueurs.add(j1);
         this.add(j1);
-        JTextField j2=new JTextField("Joueur 2");
+        JTextField j2=new JTextField();
         this.lesJoueurs.add(j2);
         this.add(j2);
-        JTextField j3=new JTextField("Joueur 3");
+        JTextField j3=new JTextField();
         this.lesJoueurs.add(j3);
         this.add(j3);
         JTextField j4=new JTextField("Joueur 4");
