@@ -1,3 +1,13 @@
+
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -9,12 +19,17 @@
  * @author Perso
  */
 public class Lettre {
+    private int id;
     private String nom;
     private int value;
+    private ImageIcon image;
 
-    public Lettre(String n, int v){
-        this.nom=n;
-        this.value=v;
+    public Lettre(int id,String n, int v){
+            this.id=id;
+            this.nom=n;
+            this.value=v;
+            File file = new File(""); 
+            this.image=new ImageIcon(file.getAbsolutePath()+"/images/lettres/"+nom+".jpg");
     }
     /**
      * @return the nom
@@ -23,32 +38,35 @@ public class Lettre {
         return nom;
     }
 
-    /**
-     * @param nom the nom to set
-     */
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    /**
-     * @return the value
-     */
     public int getValue() {
         return value;
     }
-
-    /**
-     * @param value the value to set
-     */
-    public void setValue(int value) {
-        this.value = value;
+    
+    public int getId(){
+        return this.id;
     }
+    
+    public boolean equals(Lettre l){
+        if(this.id==l.getId()){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
             
     public String toString(){
         String s;
         
-        return this.getNom()+" - "+this.getValue();
+        return this.getId()+" "+this.getNom()+" - "+this.getValue();
     }
+
+    public ImageIcon getImage() {
+        return image;
+    }
+    
+
 }
 
 

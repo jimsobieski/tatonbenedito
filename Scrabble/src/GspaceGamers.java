@@ -29,13 +29,56 @@ public class GspaceGamers extends JPanel{
         this.lesJoueurs=lj;
         Joueur j;
         Iterator<Joueur> it=this.lesJoueurs.iterator();
+        boolean p=true;
         while(it.hasNext()){
             j=it.next();
-            this.spacesGame.add(new GspaceGamer(j));          
+            if(p==true){
+                this.spacesGame.add(new GspaceGamer(j,true)); 
+                p=false;
+            }
+            else{
+                this.spacesGame.add(new GspaceGamer(j,false)); 
+            }
+            
+                     
         }
         Iterator<GspaceGamer> it2=this.spacesGame.iterator();
         while(it2.hasNext()){
             this.add(it2.next());
         }
     }
+    
+    public Glettre getLettreEnMain(){
+        Iterator<GspaceGamer> it=this.spacesGame.iterator();
+        while(it.hasNext()){
+            GspaceGamer gg=it.next();
+            if (gg.getLettreEnMain()!=null){
+                return gg.getLettreEnMain();
+            }
+        }
+        return null;
+    }
+    
+    public Glettre getLettreClicke(){
+        Iterator<GspaceGamer> it=this.spacesGame.iterator();
+        while(it.hasNext()){
+            GspaceGamer gg=it.next();
+            if (gg.getLettreClicke()!=null){
+                return gg.getLettreClicke();
+            }
+        }
+        return null;
+    }
+    
+    public GspaceGamer playSpace(){
+        Iterator<GspaceGamer> it=this.spacesGame.iterator();
+        while(it.hasNext()){
+            GspaceGamer gg=it.next();
+            if (gg.isPlaying()){
+                return gg;
+            }
+        }
+        return null;
+    }
+    
 }

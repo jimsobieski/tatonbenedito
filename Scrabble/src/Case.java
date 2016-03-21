@@ -40,7 +40,7 @@ public class Case {
 	}
 	
         public boolean equals(Case c){
-            if(this.getX()==c.getX() && this.getY()==c.getY() && this.getNumRegle()==c.getNumRegle()){
+            if(this.getPositionX()==c.getPositionX() && this.getPositionY()==c.getPositionY() && this.getNumRegle()==c.getNumRegle()){
                 return true;
             }
             return false;
@@ -65,20 +65,12 @@ public class Case {
             return false;
         }
 
-	public int getX() {
-		return x;
+	public int getPositionX() {
+		return this.x;
 	}
 
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
+	public int getPositionY() {
+		return this.y;
 	}
         
         public Color getColor(){
@@ -97,4 +89,7 @@ public class Case {
 		return this.numRegle;
 	}
 	
+        public String toString(){
+            return "CASE - X : "+this.getPositionX()+" Y : "+this.getPositionY()+"\n";
+        }
 }

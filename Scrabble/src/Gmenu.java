@@ -27,6 +27,7 @@ public class Gmenu extends JPanel implements ActionListener{
         this.add(this.startGame); 
         this.game=new Ggame();
         this.startGame.getStartButton().addActionListener(new WatchStartButton(this));
+        this.setPreferredSize(new Dimension(400,700));
     }
 
     @Override
@@ -38,11 +39,15 @@ public class Gmenu extends JPanel implements ActionListener{
         return startGame;
     }
     
+    public Ggame getGame(){
+        return this.game;
+    }
+    
     public void addJoueurs(ArrayList<Joueur> lj){
         this.game.addJoueurs(lj);
         this.add(this.game);
     }
-    
+      
     class WatchStartButton implements ActionListener{
 
         private Gmenu menu;

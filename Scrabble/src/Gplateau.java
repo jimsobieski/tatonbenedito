@@ -1,6 +1,8 @@
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.JButton;
@@ -16,16 +18,39 @@ import javax.swing.JPanel;
  *
  * @author JimSobieski
  */
-public class Gplateau extends JPanel{
+public class Gplateau extends JPanel implements ActionListener{
     
-    public Gplateau(ArrayList<Case> cs){
+    private ArrayList<Gcase> lesCases;
+    
+    public Gplateau(ArrayList<Gcase> cs){
         super();
+        this.lesCases=new ArrayList<Gcase>();
         this.setLayout(new GridLayout(15,15,2,2));
-        Iterator<Case> it=cs.iterator();
+        Iterator<Gcase> it=cs.iterator();
                 while(it.hasNext()){
-                    Case c=it.next();
-                    Gcase dessinCase=new Gcase(c);
-                    add(dessinCase);
+                    Gcase c=it.next();
+                                       
+//                    c.addActionListener(new ActionListener(){
+//
+//                        @Override
+//                        public void actionPerformed(ActionEvent ae) {
+//                            System.out.println("Case x: "+c.getPositionX()+" y: "+c.getPositionY());
+//                        }
+//                    });
+//                    
+                    this.lesCases.add(c);
+                    add(c);
                 }
     }
+
+    public ArrayList<Gcase> getLesCases() {
+        return lesCases;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        
+    }
+    
+    
 }

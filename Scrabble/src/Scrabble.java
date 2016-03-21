@@ -67,19 +67,19 @@ public class Scrabble {
         }
         @Override
         public void actionPerformed(ActionEvent ae) {
+            //CREATION DES JOUEURS
             GstartGame g=fenetre.getMenu().getStartGame();
             ArrayList<JTextField> lesNoms=g.getLesJoueurs();
             int cmp=0;
             Joueur j;
-            for(int i=0; i<4;i++){
+            for(int i=0;i<4;i++){
                 JTextField input=lesNoms.get(i);
                 if(!input.getText().isEmpty()){
                     j=new Joueur(cmp,input.getText());
                     j.piocher(sac);
                     s.getLesJoueurs().add(j);
                     cmp++;
-                }
-                
+                }                
             }
             //Initialise les intefaces joueurs
             fenetre.getMenu().addJoueurs(s.getLesJoueurs());

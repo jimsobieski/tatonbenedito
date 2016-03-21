@@ -118,6 +118,7 @@ public class Sac {
     private ArrayList<Lettre> creerLettres(){
         ArrayList<Lettre> l=new ArrayList<Lettre>();
         Iterator<String> it=this.getAlphabet().iterator();
+        int idLettre=0;
         //pour chaque lettre de l'alphabet
         while(it.hasNext()){
             String alpha=it.next();
@@ -126,8 +127,11 @@ public class Sac {
             int nbLettres=Integer.parseInt(infos[0]);
             int value=Integer.parseInt(infos[1]);
             for(int i=1;i<=nbLettres;i++){
-                l.add(new Lettre(alpha,value));
+                Lettre lettre=new Lettre(idLettre,alpha,value);
+                l.add(lettre);
+                idLettre++;
             }
+            idLettre++;
         }
         return l;
     }
