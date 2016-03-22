@@ -41,6 +41,10 @@ public class GspaceGamer extends JPanel implements ActionListener{
                         lettreEnMain=l;
                         bloquerLettres(l);
                     }
+                    else{
+                        debloquerLettres();
+                        lettreEnMain=null;
+                    }
                    
                 }
                 

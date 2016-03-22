@@ -25,6 +25,31 @@ public class GspaceGamers extends JPanel{
         
             
     }
+    
+    public void nextJoueur(){
+        Joueur next=null;
+        int idJoueur=playSpace().getJoueur().getId();
+        for(int i=0;i<lesJoueurs.size();i++){
+            if(lesJoueurs.get(i).equals(playSpace().getJoueur())){
+                next=lesJoueurs.get(i+1);
+            }
+    }
+        
+        this.plateforme.next(this);
+    }
+    
+    public GspaceGamer trouverSpaceGame(Joueur j){
+        GspaceGamer gg=null;
+        Iterator<GspaceGamer> it=this.spacesGame.iterator();
+        while(it.hasNext()){
+            GspaceGamer g=it.next();
+            if(g.getJoueur().equals(j)){
+                gg=g;
+            }
+        }
+        return gg;
+    }
+    
     public void addJoueurs(ArrayList<Joueur> lj){
         this.lesJoueurs=lj;
         Joueur j;

@@ -17,17 +17,17 @@ public class Case {
 		this.use=false;
 		this.numRegle=nr;
                 switch(this.numRegle){
-                case 0:this.color=Color.lightGray;
+                case 0:this.color=new Color(25,137,61);
                     break;
-                case 1:this.color=Color.cyan;
+                case 1:this.color=new Color(151,197,230);
                     break;
-                case 2:this.color=Color.blue;
+                case 2:this.color=new Color(0,144,205);
                     break;
-                case 3:this.color=Color.pink;
+                case 3:this.color=new Color(231,184,100);
                     break;
-                case 4:this.color=Color.red;
+                case 4:this.color=new Color(213,0,36);
                     break;
-                case 5:this.color=Color.pink;
+                case 5:this.color=new Color(230,150,150);
                     break;
                     }
 	}

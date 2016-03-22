@@ -17,16 +17,29 @@ public class Gcase extends JButton implements ActionListener{
     private Color color; 
     private boolean click;
     private Glettre lettre;
+    private int regle;
     
     public Gcase(Case ca){
         super();
         this.casePlateau=ca;
+        this.regle=ca.getNumRegle();
         this.click=false;
         this.lettre=null;
         this.color=ca.getColor();
         this.setBackground(color);
         this.addActionListener(this);
         
+    }
+    
+    public int compterPoints(){
+        int p=this.getLettre().getLettre().getValue();
+        if(this.regle==1){
+            return p*2;
+        }
+        if(this.regle==2){
+            return p*3;
+        }
+        return p;
     }
     
     public String toString(){
@@ -80,6 +93,10 @@ public class Gcase extends JButton implements ActionListener{
 
     public Color getColor() {
         return color;
+    }
+    
+    public int getRegle(){
+        return this.regle;
     }
 
     public boolean isClick() {

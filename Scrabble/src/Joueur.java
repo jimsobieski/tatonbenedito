@@ -30,6 +30,13 @@ public class Joueur {
         ArrayList<Lettre> ls=s.piocher(7-nbLettres);
         this.chevalet.piocher(ls);
     }
+    
+    public boolean equals(Joueur j){
+        if(this.id==j.getId()){
+            return true;
+        }
+        return false;
+    }
 
     public int getId() {
         return id;

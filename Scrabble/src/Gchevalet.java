@@ -60,32 +60,7 @@ public class Gchevalet extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        boolean test=false;
-        
-                //ON CHERCHE SI IL Y A UNE LETTRE CLIQUE
-                Iterator<Glettre> it=getLesLettres().iterator();
-                while(it.hasNext()){
-                    Glettre l=it.next();                
-                    if(l.estClick()){
-                        test=true;
-                                            
-                    }
-                }
-                
-                Iterator<Glettre> it2=getLesLettres().iterator();
-                while(it2.hasNext()){
-                    Glettre l=it2.next(); 
-                    //SI OUI ON BLOQUE LES AUTRES
-                    if(test){
-                        if(!l.estClick()){
-                            l.bloquerLettre();
-                        }
-                    }
-                    //SINON ON LES DEBLOQUENT
-                    else{
-                        l.debloquerLettre();
-                    }
-                }
+
                 
 
     }
