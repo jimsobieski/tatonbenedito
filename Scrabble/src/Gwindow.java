@@ -37,10 +37,10 @@ public class Gwindow extends JFrame implements ActionListener {
                         if (!casePlateau.contientLettre()) {
                             //ON AJOUTE LA LETTRE SUR LE PLATEAU
                             casePlateau.poserLettre(lettreEnMain);
-                            gg.enleverLettreChevalet(lettreEnMain);
+                            gg.masquerLettreChevalet(lettreEnMain);
                             gg.addCasePose(casePlateau);
                             gg.poserLettre();
-                            gg.afficherCasePoses();
+                            //gg.afficherCasePoses();
                         }
 
                     } else {
@@ -52,7 +52,7 @@ public class Gwindow extends JFrame implements ActionListener {
                                 Glettre gl = it.next();
                                 if (lettre.equals(gl)) {
                                     gl.setVisible(true);
-                                    casePlateau.enleverLettre();
+                                    casePlateau.enleverLettrePlateau();
                                     gg.removeCasePose(casePlateau);
                                 }
                             }

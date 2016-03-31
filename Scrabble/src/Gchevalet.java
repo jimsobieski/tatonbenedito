@@ -39,6 +39,16 @@ public class Gchevalet extends JPanel implements ActionListener{
         return this.lesLettres;
     }
     
+    public ArrayList<Lettre> getLesComposantsLettres(){
+        ArrayList<Lettre> ls=new ArrayList<Lettre>();
+        Iterator<Glettre> it=lesLettres.iterator();
+        while(it.hasNext()){
+            Glettre gl=it.next();
+            ls.add(gl.getLettre());
+        }
+        return ls;
+    }
+    
     public void debloquerLettres(){
         Iterator<Glettre> it=getLesLettres().iterator();
                 while(it.hasNext()){
@@ -56,6 +66,31 @@ public class Gchevalet extends JPanel implements ActionListener{
                                             
                     }
                 }
+    }
+    
+    public void enleverLettres(ArrayList<Glettre> ls){
+        Iterator<Glettre> it=getLesLettres().iterator();
+        ArrayList<Lettre> lettres=new ArrayList<Lettre>();
+                while(it.hasNext()){
+                    Glettre l=it.next();                
+                    if(ls.contains(l)){
+                        lettres.add(l.getLettre());
+                        it.remove();
+                        lesLettres.remove(l);
+                        this.remove(l);
+                    }
+                }
+                this.chevalet.enleverLettres(lettres);
+    }
+    
+    public void ajouterLettres(ArrayList<Glettre> ls){
+        this.lesLettres.addAll(ls);
+        Iterator<Glettre> it=ls.iterator();
+        while(it.hasNext()){
+            Glettre gl=it.next();
+            this.add(gl);
+        }
+        
     }
 
     @Override

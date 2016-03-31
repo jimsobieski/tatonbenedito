@@ -17,18 +17,27 @@ public class Chevalet {
     }
     
     public void piocher(ArrayList<Lettre> ls){
-        Iterator<Lettre> it=ls.iterator();
-        Lettre l;
-        while(it.hasNext()){
-            l=it.next();
-            this.getLesLettres().add(l);
-            it.remove();
-        }
+        lesLettres.addAll(ls);
     }
 
     public ArrayList<Lettre> getLesLettres() {
         return lesLettres;
     }
+    
+    public void enleverLettres(ArrayList<Lettre> ls){
+        Iterator<Lettre> it=ls.iterator();
+        while(it.hasNext()){
+            Lettre l=it.next();
+            if(lesLettres.contains(l)){
+                lesLettres.remove(l);
+            }
+        }
+    }
+    
+    public void ajouterLettres(ArrayList<Lettre> ls){
+        lesLettres.addAll(ls);
+    }
+    
     
     public int getNbLettres(){
         return this.getLesLettres().size();

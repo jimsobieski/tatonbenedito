@@ -33,22 +33,7 @@ public class GspaceGamer extends JPanel implements ActionListener{
         Iterator<Glettre> it=this.chevalet.getLesLettres().iterator();
         while (it.hasNext()){
             Glettre l=it.next();
-            l.addActionListener(new ActionListener(){
-
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    if(lettreEnMain==null){
-                        lettreEnMain=l;
-                        bloquerLettres(l);
-                    }
-                    else{
-                        debloquerLettres();
-                        lettreEnMain=null;
-                    }
-                   
-                }
-                
-            });
+            l.addActionListener(new LettreChevaletAction(l));
         }
         
         this.sections=new BorderLayout();
@@ -57,6 +42,29 @@ public class GspaceGamer extends JPanel implements ActionListener{
         this.add(this.chevalet,BorderLayout.CENTER);
         
     }
+    
+    class LettreChevaletAction implements ActionListener{
+
+        private Glettre lettre;
+        
+        public LettreChevaletAction(Glettre l){
+            this.lettre=l;
+        }
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if(lettreEnMain==null){
+                        lettreEnMain=lettre;
+                        bloquerLettres(lettre);
+                    }
+                    else{
+                        debloquerLettres();
+                        lettreEnMain=null;
+                    }
+        }
+    }
+        
+        
+    
     
     
     public Glettre getLettreClicke(){
@@ -70,7 +78,7 @@ public class GspaceGamer extends JPanel implements ActionListener{
         return null;
     }
     
-    public void enleverLettreChevalet(Glettre l){
+    public void masquerLettreChevalet(Glettre l){
         Iterator<Glettre> it=this.getChevalet().getLesLettres().iterator();
         while(it.hasNext()){
             Glettre gl=it.next();
@@ -78,6 +86,26 @@ public class GspaceGamer extends JPanel implements ActionListener{
                 gl.setVisible(false);
             }
         }
+    }
+    
+    public void enleverLettresChevalet(ArrayList<Glettre> ls){
+        this.chevalet.enleverLettres(ls);
+    }
+    
+    public void ajouterLettresChevalet(){
+        ArrayList<Lettre> lettresAffiches=chevalet.getLesComposantsLettres();
+        ArrayList<Glettre> lettresChevalet=new ArrayList<Glettre>();
+        ArrayList<Lettre> lesLettres=joueur.getChevalet().getLesLettres();
+        Iterator<Lettre> it=lesLettres.iterator();
+        while(it.hasNext()){
+            Lettre l=it.next();
+            if(!lettresAffiches.contains(l)){
+                Glettre gl=new Glettre(l);
+                gl.addActionListener(new LettreChevaletAction(gl));
+                lettresChevalet.add(gl);
+            }
+        }
+        chevalet.ajouterLettres(lettresChevalet);
     }
     
     public void bloquerLettres(Glettre l){
@@ -90,6 +118,15 @@ public class GspaceGamer extends JPanel implements ActionListener{
     
     public boolean isPlaying(){
         return this.playing;
+    }
+    
+    public void changePlaying(){
+        if(this.playing){
+            this.playing=false;
+        }
+        else{
+            this.playing=true;
+        }
     }
 
     @Override
@@ -140,6 +177,10 @@ public class GspaceGamer extends JPanel implements ActionListener{
             System.out.println(it.next());
             
         }
+    }
+    
+    public void viderCasesPoses(){
+        this.casePoses.removeAll(casePoses);
     }
     
     private List<Integer> triFusion(List<Integer> t) {

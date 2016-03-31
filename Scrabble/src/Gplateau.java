@@ -46,6 +46,19 @@ public class Gplateau extends JPanel implements ActionListener{
     public ArrayList<Gcase> getLesCases() {
         return lesCases;
     }
+    
+    public Gcase getCase(Gcase c){
+        if(lesCases.contains(c)){
+            Iterator<Gcase> it=lesCases.iterator();
+            while(it.hasNext()){
+                Gcase casePlateau=it.next();
+                if(casePlateau.equals(c)){
+                    return casePlateau;
+                }
+            }
+        }
+        return null;
+    }
 
     @Override
     public void actionPerformed(ActionEvent ae) {

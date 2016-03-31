@@ -64,7 +64,7 @@ public class Gcase extends JButton implements ActionListener{
         this.setIcon(l.getLettre().getImage());
     }
     
-    public void enleverLettre(){
+    public void enleverLettrePlateau(){
         this.lettre=null;
         this.setIcon(null);
     }

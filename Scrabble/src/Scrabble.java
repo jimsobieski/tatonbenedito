@@ -28,13 +28,11 @@ public class Scrabble {
     private Gwindow fenetre;
     private Plateau plateau;
     private ArrayList<Joueur> lesJoueurs;
-    private Sac sac;
 
     public Scrabble() {
         this.plateau = new Plateau();
         this.fenetre = new Gwindow(this.getPlateau());
         this.lesJoueurs = new ArrayList<Joueur>();
-        this.sac = new Sac();
         JButton startButton = this.fenetre.getMenu().getStartGame().getStartButton();
         startButton.addActionListener(new WatchStartButton());
 
@@ -67,6 +65,7 @@ public class Scrabble {
             //CREATION DES JOUEURS
             GstartGame g = fenetre.getMenu().getStartGame();
             ArrayList<JTextField> lesNoms = g.getLesJoueurs();
+            Sac sac=fenetre.getMenu().getGame().getSac();
             int cmp = 0;
             Joueur j;
             for (int i = 0; i < 4; i++) {

@@ -70,6 +70,13 @@ public class Joueur {
         return chevalet;
     }
     
+    public String toString(){
+        String s="JOUEUR n°"+id+"\n";
+        s+="Nom : "+nom+"\n";
+        s+="Points : "+points+"\n";
+        s+="Lettres : "+chevalet+"\n"; 
+        return s;
+    }
     
     
 }

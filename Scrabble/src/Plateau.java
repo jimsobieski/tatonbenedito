@@ -143,29 +143,29 @@ public class Plateau {
 		return s;
         }
 	
-	public boolean ajouterMot(Mot m){
-                if(this.isFirst()){
-                    if(m.searchCase(new Case(7,7,5))){
-                        this.setFirst(false);
-                    }
-                    else{
-                        return false;
-                    }
-                }
-                //On crée un iterator des cases du mot
-                Iterator<Case> it=m.getLesCases().iterator();
-                while (it.hasNext()){
-                    //On recupere chaque case
-                    Case caseMot=it.next();
-                    //On trouve la casePlateau equivalente et on y ajoute la lettre
-                    Case casePlateau=this.inCase(caseMot);
-                    casePlateau.addLettre(caseMot.getLettre());
-                    casePlateau.changeUse(); 
-                    this.getLesMots().add(m);
-                }
-		this.getLesMots().add(m);
-		return true;
-	}
+//	public boolean ajouterMot(Mot m){
+//                if(this.isFirst()){
+//                    if(m.searchCase(new Case(7,7,5))){
+//                        this.setFirst(false);
+//                    }
+//                    else{
+//                        return false;
+//                    }
+//                }
+//                //On crée un iterator des cases du mot
+//                Iterator<Case> it=m.getLesCases().iterator();
+//                while (it.hasNext()){
+//                    //On recupere chaque case
+//                    Case caseMot=it.next();
+//                    //On trouve la casePlateau equivalente et on y ajoute la lettre
+//                    Case casePlateau=this.inCase(caseMot);
+//                    casePlateau.addLettre(caseMot.getLettre());
+//                    casePlateau.changeUse(); 
+//                    this.getLesMots().add(m);
+//                }
+//		this.getLesMots().add(m);
+//		return true;
+//	}
         
         public Case inCase(Case c){
             int cmp=0;

@@ -30,6 +30,8 @@ public class Ggame extends JPanel {
     private GspaceGamers plateforme;
     private ArrayList<Joueur> lesJoueurs;
     private ArrayList<String> dictionnaire;
+    private ArrayList<Mot> lesMots;
+    private Sac sac;
     private JButton valideMotButton;
     private boolean firstMot;
 
@@ -37,8 +39,10 @@ public class Ggame extends JPanel {
         super();
         this.content = new GridLayout(3, 0);
         this.setLayout(this.content);
+        this.sac = new Sac();
+        this.lesMots = new ArrayList<Mot>();
         this.lesJoueurs = null;
-        this.firstMot=true;
+        this.firstMot = true;
         try {
             this.dictionnaire = creerDico();
         } catch (IOException ex) {
@@ -52,82 +56,158 @@ public class Ggame extends JPanel {
         this.plateforme.addJoueurs(lj);
         this.add(this.plateforme);
         this.valideMotButton = new JButton("VALIDER");
-//        JPanel scores=new JPanel();
-//        Iterator<Joueur> it=this.lesJoueurs.iterator();
-//        while(it.hasNext()){
-//            Joueur j=it.next();
-//            scores.add(new JLabel(j.getNom()+" - Points : "+j.getPoints()));
-//        }
-//        this.add(scores);
+        JPanel scores = new JPanel();
+        Iterator<Joueur> it = this.lesJoueurs.iterator();
+        while (it.hasNext()) {
+            Joueur j = it.next();
+            ///scores.add(new JLabel(j.getNom()+" - Points : "+j.getPoints()));
+        }
+        //this.add(scores);
         this.valideMotButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
                 //VALIDATION DU MOT
                 GspaceGamer gg = playSpace();
+                ArrayList<Glettre> lesLettres = new ArrayList<Glettre>();
                 ArrayList<Integer> lesX = new ArrayList<Integer>();
                 ArrayList<Integer> lesY = new ArrayList<Integer>();
                 //ON RECUPERE LES X ET LES Y
                 ArrayList<Gcase> casePoses = gg.getCasePoses();
                 Iterator<Gcase> it = casePoses.iterator();
-                String mot="";
-                int points=0;
+                String mot = "";
+                Mot motCases = null;
+                int points = 0;
+                int maxX = 0;
+                int maxY = 0;
                 while (it.hasNext()) {
                     Gcase c = it.next();
-                    points+=c.compterPoints();
+                    //GESTION JOKER A RAJOUTER ICI
+                    lesLettres.add(c.getLettre());
+                    points += c.compterPoints();
                     lesX.add(c.getPositionX());
+                    if (c.getPositionX() > maxX) {
+                        maxX = c.getPositionX();
+                    }
                     lesY.add(c.getPositionY());
+                    if (c.getPositionY() > maxY) {
+                        maxY = c.getPositionY();
+                    }
                 }
                 boolean xAxe = sameAxe(lesX);
-                boolean yAxe = sameAxe(lesY);               
+                boolean yAxe = sameAxe(lesY);
 
-                if (xAxe) {
-                    if (suiteAxe(lesY)) {
-                        System.out.println("MOT PLACE");
-                        mot=extraireMot(casePoses,lesY,false);
+                if (firstMot) {
+                    //DANS CE CAS ON NE REGARDE PAS LES AUTRES CASES DU PLATEAU
+                    if (xAxe) {
+                        if (suiteAxe(lesY)) {
+                            mot = extraireMot(casePoses, lesY, false);
+                        }
+                    } else if (yAxe) {
+                        if (suiteAxe(lesX)) {
+                            mot = extraireMot(casePoses, lesX, true);
+                        }
                     }
-                } else if (yAxe) {
-                    if (suiteAxe(lesX)) {
-                        System.out.println("MOT PLACE");
-                        mot=extraireMot(casePoses,lesX,true);
+                    motCases = new Mot(casePoses);
+                } else {
+                    //CHERCHER LES CASES SE RAJOUTANT AU MOT
+                    if (xAxe) {
+                        ArrayList<Gcase> autresCases = new ArrayList<Gcase>();
+                        int numAxe = lesX.get(0);
+                        ArrayList<Mot> motEnX = searchMotXPosition(numAxe);
+                        Iterator<Mot> itMots = motEnX.iterator();
+                        while (itMots.hasNext()) {
+                            //POUR CHAQUE MOT AYANT UNE CASE DANS L'AXE DU MOT
+                            Mot motPose = itMots.next();
+                            Iterator<Gcase> itCase = motPose.getCasesXPosition(numAxe).iterator();
+                            while (itCase.hasNext()) {
+                                //ON VERIFIE SI LA SUITE EST TJ OK POUR CHAQUE CASE
+                                Gcase autreCase = itCase.next();
+                                lesY.add(autreCase.getPositionY());
+                                if (suiteAxe(lesY)) {
+                                    //LA SUITE EST OK
+                                    if (autreCase.getPositionY() > maxY) {
+                                        autresCases.add(autreCase);
+                                        
+                                    }
+                                    else{
+                                        autresCases.add(autreCase);
+                                    }
+                                    
+                                }
+                                
+                            }
+                            if (suiteAxe(lesY)) {
+                                    //LA SUITE EST OK
+//                                    if (autreCase.getPositionY() > maxY) {
+//                                        autresCases.add(autreCase);
+//                                        
+//                                    }
+//                                    else{
+//                                        autresCases.add(autreCase);
+//                                    }
+                                    
+                                }
+                            //autresCases.addAll(motPose.getCasesXPosition(numAxe));
+
+                        }
+
                     }
                 }
-                if(firstMot){
-                    
+
+                System.out.println("LE MOT CASE : " + motCases);
+
+                //VERIFICATION MOT COLLE
+                System.out.println(mot);
+                if (dictionnaire.contains(mot)) {
+                    System.out.println("MOT VALIDE");
+                    // /!\NOMBRE DE CASES X2 X3
+                    int nbFois2 = nbMulti(3, casePoses);
+                    int nbFois3 = nbMulti(4, casePoses);
+                    //ON COMPTE LES POINTS
+                    if (nbFois2 > 0) {
+                        points = points * nbFois2 * 2;
+                    } else if (nbFois3 > 0) {
+                        points = points * nbFois3 * 3;
+                    }
+
+                    if (casePoses.size() == 7) {
+                        points += 50;
+                    }
+                    gg.getJoueur().addPoints(points);
+                    lesMots.add(motCases);
+                    gg.enleverLettresChevalet(lesLettres);
+                    gg.getJoueur().piocher(sac);
+                    gg.ajouterLettresChevalet();
+                    gg.viderCasesPoses();
+                    plateforme.nextJoueur();
+                    firstMot = false;
                 }
-        
-                if(dictionnaire.contains(mot)){
-                    System.out.println("MOT VALIIIIDE");
-                }
-                // /!\NOMBRE DE CASES X2 X3
-                int nbFois2=nbMulti(3,casePoses);
-                int nbFois3=nbMulti(4,casePoses);
-                if(nbFois2>0){
-                    points=points*nbFois2*2;
-                }
-                else if(nbFois3>0){
-                    points=points*nbFois3*3;
-                }
-                
-                if(casePoses.size()==7){
-                    points+=50;
-                }
-                gg.getJoueur().addPoints(points);
-                System.out.println(gg.getJoueur().getPoints());
-                plateforme.nextJoueur();
 
             }
 
         });
         this.add(valideMotButton);
     }
-    
-    private int nbMulti(int r, ArrayList<Gcase> cases){
-        int nb=0;
-        Iterator<Gcase> it=cases.iterator();
-        while(it.hasNext()){
-            Gcase c=it.next();
-            if(c.getRegle()==r){
+
+    public ArrayList<Mot> searchMotXPosition(int x) {
+        ArrayList<Mot> m = new ArrayList<Mot>();
+        Iterator<Mot> it = lesMots.iterator();
+        while (it.hasNext()) {
+            Mot motPose = it.next();
+            if (motPose.contientPositionX(x)) {
+                m.add(motPose);
+            }
+        }
+        return m;
+    }
+
+    private int nbMulti(int r, ArrayList<Gcase> cases) {
+        int nb = 0;
+        Iterator<Gcase> it = cases.iterator();
+        while (it.hasNext()) {
+            Gcase c = it.next();
+            if (c.getRegle() == r) {
                 nb++;
             }
         }
@@ -137,38 +217,35 @@ public class Ggame extends JPanel {
     private String extraireMot(ArrayList<Gcase> lesCases, ArrayList<Integer> axe, boolean xy) {
         String mot = "";
         boolean ok = false;
-        int i=0;
-        System.out.println(axe);
+        int i = 0;
         while (!ok) {
             Iterator<Gcase> it = lesCases.iterator();
             while (it.hasNext()) {
-                Gcase c=it.next();
-                Case ca=c.getCasePlateau();
+                Gcase c = it.next();
+                Case ca = c.getCasePlateau();
                 //TRUE = X SUITE
-                if(xy){
-                    if(ca.getPositionX()==axe.get(i)){
-                        Lettre l=c.getLettre().getLettre();
-                        mot+=l.getNom();
+                if (xy) {
+                    if (ca.getPositionX() == axe.get(i)) {
+                        Lettre l = c.getLettre().getLettre();
+                        mot += l.getNom();
+                        i++;
+                    }
+                } //FALSE = Y SUITE
+                else {
+                    if (ca.getPositionY() == axe.get(i)) {
+                        Lettre l = c.getLettre().getLettre();
+                        mot += l.getNom();
                         i++;
                     }
                 }
-                //FALSE = Y SUITE
-                else{
-                    if(ca.getPositionY()==axe.get(i)){
-                        Lettre l=c.getLettre().getLettre();
-                        mot+=l.getNom();
-                        i++;
-                    }
-                }
-                if(axe.size()==i){
-                    ok=true;
-                    System.out.println(mot);
+                if (axe.size() == i) {
+                    ok = true;
                     return mot;
                 }
-                
+
             }
         }
-        
+
         return mot;
 
     }
@@ -192,8 +269,8 @@ public class Ggame extends JPanel {
         }
         return true;
     }
-    
-    public void ajouterPoints(Joueur j,int p){
+
+    public void ajouterPoints(Joueur j, int p) {
         j.addPoints(p);
     }
 
@@ -203,6 +280,10 @@ public class Ggame extends JPanel {
 
     public GspaceGamers getPlateforme() {
         return this.plateforme;
+    }
+
+    public Sac getSac() {
+        return this.sac;
     }
 
     public GspaceGamer playSpace() {
