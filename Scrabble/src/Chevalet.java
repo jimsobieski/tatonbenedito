@@ -34,6 +34,13 @@ public class Chevalet {
         }
     }
     
+    public ArrayList<Lettre> enleverToutesLesLettres(){
+        ArrayList<Lettre> ls=new ArrayList<Lettre>();
+        ls.addAll(lesLettres);
+        lesLettres.clear();
+        return ls;
+    }
+    
     public void ajouterLettres(ArrayList<Lettre> ls){
         lesLettres.addAll(ls);
     }

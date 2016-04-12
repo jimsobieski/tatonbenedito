@@ -35,8 +35,9 @@ public class Gchevalet extends JPanel implements ActionListener{
         }
     }
     
-    public ArrayList<Glettre> getLesLettres(){
-        return this.lesLettres;
+    public void changerLettres(ArrayList<Glettre> move, ArrayList<Glettre> add){
+        this.enleverLettres(move);
+        this.ajouterLettres(add);
     }
     
     public ArrayList<Lettre> getLesComposantsLettres(){
@@ -91,6 +92,10 @@ public class Gchevalet extends JPanel implements ActionListener{
             this.add(gl);
         }
         
+    }
+    
+    public ArrayList<Glettre> getLesLettres(){
+        return this.lesLettres;
     }
 
     @Override

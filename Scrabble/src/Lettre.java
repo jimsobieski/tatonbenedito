@@ -57,8 +57,6 @@ public class Lettre {
 
             
     public String toString(){
-        String s;
-        
         return this.getId()+" "+this.getNom()+" - "+this.getValue();
     }
 

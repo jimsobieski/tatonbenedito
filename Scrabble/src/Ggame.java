@@ -37,7 +37,7 @@ public class Ggame extends JPanel {
 
     public Ggame() {
         super();
-        this.content = new GridLayout(3, 0);
+        this.content = new GridLayout(4, 0);
         this.setLayout(this.content);
         this.sac = new Sac();
         this.lesMots = new ArrayList<Mot>();
@@ -49,8 +49,507 @@ public class Ggame extends JPanel {
             Logger.getLogger(Ggame.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.plateforme = new GspaceGamers();
+        
+        
     }
 
+    
+    class valideButtonAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+
+            //VALIDATION DU MOT
+            GspaceGamer gg = playSpace();
+            ArrayList<Glettre> lesLettres = new ArrayList<Glettre>();
+            ArrayList<Integer> lesX = new ArrayList<Integer>();
+            ArrayList<Integer> lesY = new ArrayList<Integer>();
+            //ON RECUPERE LES X ET LES Y
+            ArrayList<Gcase> casePoses = gg.getCasePoses();
+            Iterator<Gcase> it = casePoses.iterator();
+            ArrayList<String> mots = new ArrayList<String>();
+            Mot motCases = null;
+            int points = 0;
+            int maxX = 0;
+            int maxY = 0;
+            while (it.hasNext()) {
+                Gcase c = it.next();
+                //GESTION JOKER A RAJOUTER ICI
+                lesLettres.add(c.getLettre());
+                points += c.compterPoints();
+                lesX.add(c.getPositionX());
+                if (c.getPositionX() > maxX) {
+                    maxX = c.getPositionX();
+                }
+                lesY.add(c.getPositionY());
+                if (c.getPositionY() > maxY) {
+                    maxY = c.getPositionY();
+                }
+            }
+            boolean xAxe = sameAxe(lesX);
+            boolean yAxe = sameAxe(lesY);
+
+            if (firstMot) {
+                //DANS CE CAS ON NE REGARDE PAS LES AUTRES CASES DU PLATEAU
+                Gcase centre = creerCaseMilieu();
+                boolean tmp = false;
+                Iterator<Gcase> itmp = casePoses.iterator();
+                while (itmp.hasNext()) {
+                    Gcase casetmp = itmp.next();
+                    if (!tmp) {
+                        if (casetmp.equals(centre)) {
+                            tmp = true;
+                        }
+                    }
+                }
+                if (tmp) {
+                    if (xAxe) {
+                        if (suiteAxe(lesY)) {
+                            mots.add(extraireMot(casePoses, lesY, false));
+                            motCases = new Mot(casePoses);
+                        }
+                    } else if (yAxe) {
+                        if (suiteAxe(lesX)) {
+                            mots.add(extraireMot(casePoses, lesX, true));
+                            motCases = new Mot(casePoses);
+                        }
+                    }
+
+                } else {
+                    System.out.println("FIRST : LE MOT DOIT ETRE AU CENTRE");
+                }
+                int nbFois2 = nbMulti(3, casePoses);
+                int nbFois3 = nbMulti(4, casePoses);
+                //ON COMPTE LES POINTS
+                if (nbFois2 > 0) {
+                    points = points * nbFois2 * 2;
+                } else if (nbFois3 > 0) {
+                    points = points * nbFois3 * 3;
+                }
+
+                if (casePoses.size() == 7) {
+                    points += 50;
+                }
+
+            } else {
+                //SI UNE SEULE LETTRE EST POSE
+                if (casePoses.size() == 1) {
+                    Gcase c = casePoses.get(0);
+                    ArrayList<Mot> motEnX = searchMotXPosition(c.getPositionX());
+                    ArrayList<Mot> motEnY = searchMotYPosition(c.getPositionY());
+
+                    if (!motEnX.isEmpty()) {
+                        //CASES A AJOUTER
+                        ArrayList<Gcase> casesAdd = new ArrayList<Gcase>();
+                        casesAdd.add(c);
+                        //TOUTES LES CASES SUR LAXE X
+                        ArrayList<Gcase> casesX = new ArrayList<Gcase>();
+                        casesX.add(c);
+                        ArrayList<Integer> suite = new ArrayList<Integer>();
+                        suite.add(c.getPositionY());
+                        Iterator<Mot> itMots = motEnX.iterator();
+                        while (itMots.hasNext()) {
+                            Mot motX = itMots.next();
+                            casesX.addAll(motX.getCasesXPosition(c.getPositionX()));
+                        }
+                        for (int i = 0; i < casesX.size(); i++) {
+                            Iterator<Gcase> itCases = casesX.iterator();
+                            //POUR CHAQUE CASE DE CE MOT
+                            while (itCases.hasNext()) {
+                                Gcase autreCase = itCases.next();
+                                if (!casesAdd.contains(autreCase)) {
+                                    suite.add(autreCase.getPositionY());
+                                    if (suiteAxe(suite)) {
+                                        //LA SUITE EST OK
+                                        casesAdd.add(autreCase);
+                                    } else {
+                                        suite.remove(Integer.valueOf(autreCase.getPositionY()));
+                                    }
+                                }
+                            }
+                        }
+                        if (casesAdd.size() > 1) {
+                            mots.add(extraireMot(casesAdd, suite, false));
+                            motCases = new Mot(casesAdd);
+                            switch (c.getRegle()) {
+                                case 0:
+                                    points += c.getLettre().getLettre().getValue();
+                                    break;
+                                case 1:
+                                    points += c.getLettre().getLettre().getValue() * 2;
+                                    break;
+                                case 2:
+                                    points += c.getLettre().getLettre().getValue() * 3;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    if (!motEnY.isEmpty()) {
+                        //CASES A AJOUTER
+                        ArrayList<Gcase> casesAdd = new ArrayList<Gcase>();
+                        casesAdd.add(c);
+                        //TOUTES LES CASES SUR LAXE X
+                        ArrayList<Gcase> casesY = new ArrayList<Gcase>();
+                        casesY.add(c);
+                        ArrayList<Integer> suite = new ArrayList<Integer>();
+                        suite.add(c.getPositionX());
+                        Iterator<Mot> itMots = motEnY.iterator();
+                        while (itMots.hasNext()) {
+                            Mot motY = itMots.next();
+                            casesY.addAll(motY.getCasesYPosition(c.getPositionY()));
+                        }
+                        for (int i = 0; i < casesY.size(); i++) {
+                            Iterator<Gcase> itCases = casesY.iterator();
+                            //POUR CHAQUE CASE DE CE MOT
+                            while (itCases.hasNext()) {
+                                Gcase autreCase = itCases.next();
+                                if (!casesAdd.contains(autreCase)) {
+                                    suite.add(autreCase.getPositionX());
+                                    if (suiteAxe(suite)) {
+                                        //LA SUITE EST OK
+                                        casesAdd.add(autreCase);
+                                    } else {
+                                        suite.remove(Integer.valueOf(autreCase.getPositionX()));
+                                    }
+                                }
+                            }
+                        }
+                        if (casesAdd.size() > 1) {
+                            mots.add(extraireMot(casesAdd, suite, true));
+                            if (!motEnX.isEmpty() || !motEnY.isEmpty()) {
+                                motCases = new Mot(casesAdd);
+                                switch (c.getRegle()) {
+                                    case 0:
+                                        points += c.getLettre().getLettre().getValue();
+                                        break;
+                                    case 1:
+                                        points += c.getLettre().getLettre().getValue() * 2;
+                                        break;
+                                    case 2:
+                                        points += c.getLettre().getLettre().getValue() * 3;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            //System.out.println("MOT SUITES : "+extraireMot(casesAdd, suite, true));
+                        }
+                    }
+                    System.out.println(mots);
+                    switch (c.getRegle()) {
+                        case 3:
+                            points *= 2;
+                            break;
+                        case 4:
+                            points *= 3;
+                            break;
+                        default:
+                            break;
+                    }
+                } //CHERCHER LES CASES SE RAJOUTANT AU MOT
+                else if (xAxe) {
+                    int nbFois2 = nbMulti(3, casePoses);
+                    int nbFois3 = nbMulti(4, casePoses);
+                    //LISTE DE MOTS A LA PERPENDICULAIRE DU MOT POSEE
+                    ArrayList<Mot> motEnY = new ArrayList<Mot>();
+
+                    Iterator<Gcase> itCasesPoses = casePoses.iterator();
+                    //ON RECUPERE LES AUTRES MOT 
+                    while (itCasesPoses.hasNext()) {
+                        Gcase casePose = itCasesPoses.next();
+
+                        ArrayList<Gcase> autreCasesMot = new ArrayList<Gcase>();
+                        ArrayList<Gcase> casesAdd = new ArrayList<Gcase>();
+                        casesAdd.add(casePose);
+                        ArrayList<Integer> suite = new ArrayList<Integer>();
+                        suite.add(casePose.getPositionX());
+                        //NOMBRES DE LA SUITE
+                        motEnY = searchMotYPosition(casePose.getPositionY());
+                        //POUR CHACUN DE CES MOTS
+                        if (motEnY.size() > 0) {
+                            Iterator<Mot> itAutresMots = motEnY.iterator();
+                            while (itAutresMots.hasNext()) {
+                                Mot autreMotPose = itAutresMots.next();
+                                autreCasesMot.addAll(autreMotPose.getCasesYPosition(casePose.getPositionY()));
+                            }
+
+                            for (int i = 0; i < autreCasesMot.size(); i++) {
+                                Iterator<Gcase> itAutresCases = autreCasesMot.iterator();
+                                //POUR CHAQUE CASE DE CE MOT
+                                while (itAutresCases.hasNext()) {
+                                    Gcase autreCase = itAutresCases.next();
+                                    if (!casesAdd.contains(autreCase)) {
+                                        suite.add(autreCase.getPositionX());
+                                        if (suiteAxe(suite)) {
+                                            //LA SUITE EST OK
+                                            casesAdd.add(autreCase);
+                                        } else {
+                                            suite.remove(Integer.valueOf(autreCase.getPositionX()));
+                                        }
+                                    }
+                                }
+                            }
+                            if (casesAdd.size() > 1) {
+                                mots.add(extraireMot(casesAdd, suite, true));
+                                switch (casePose.getRegle()) {
+                                    case 0:
+                                        points += casePose.getLettre().getLettre().getValue();
+                                        break;
+                                    case 1:
+                                        points += casePose.getLettre().getLettre().getValue() * 2;
+                                        break;
+                                    case 2:
+                                        points += casePose.getLettre().getLettre().getValue() * 3;
+                                        break;
+                                    case 3:
+                                        int pointsAdd = cumulPointsLettres(casesAdd);
+                                        points += pointsAdd * 2;
+                                        break;
+                                    case 4:
+                                        int pointsAdd2 = cumulPointsLettres(casesAdd);
+                                        points += pointsAdd2 * 3;
+                                        break;
+
+                                }
+                                //System.out.println("MOT SUITES : "+extraireMot(casesAdd, suite, true));
+                            }
+                        }
+                    }
+
+                    System.out.println(mots);
+
+                    ArrayList<Gcase> autresCases = new ArrayList<Gcase>();
+                    int autresCasesPoints = 0;
+                    int numAxe = lesX.get(0);
+                    ArrayList<Mot> motEnX = searchMotXPosition(numAxe);
+                    Iterator<Mot> itMots = motEnX.iterator();
+                    while (itMots.hasNext()) {
+                        //POUR CHAQUE MOT AYANT UNE LETTRE DANS L'AXE DU MOT
+                        Mot motPose = itMots.next();
+                        //ON RECUPERE CES LETTRES
+                        autresCases.addAll(motPose.getCasesXPosition(numAxe));
+                    }
+
+                    //CETTE BOUCLE ASSURE QUELLES LETTRES SONT A AJOUTER
+                    for (int i = 0; i < autresCases.size(); i++) {
+                        Iterator<Gcase> itAutresCases = autresCases.iterator();
+                        while (itAutresCases.hasNext()) {
+                            Gcase autreCase = itAutresCases.next();
+                            if (!casePoses.contains(autreCase)) {
+                                lesY.add(autreCase.getPositionY());
+                                //ON VERIFIE SI LA SUITE EST TJ OK POUR CHAQUE CASE
+                                if (suiteAxe(lesY)) {
+                                    //LA SUITE EST OK
+                                    casePoses.add(autreCase);
+                                    autresCasesPoints += autreCase.getLettre().getLettre().getValue();
+                                } else {
+                                    lesY.remove(Integer.valueOf(autreCase.getPositionY()));
+                                }
+                            }
+
+                        }
+                    }
+
+                    if (suiteAxe(lesY)) {
+
+                        motCases = new Mot(casePoses);
+                        mots.add(extraireMot(casePoses, lesY, false));
+
+                        //ON COMPTE LES POINTS
+                        if (nbFois2 > 0) {
+                            points = points + autresCasesPoints * nbFois2 * 2;
+                        } else if (nbFois3 > 0) {
+                            points = points + autresCasesPoints * nbFois3 * 3;
+                        }
+                        System.out.println("MOT AXE : " + extraireMot(casePoses, lesY, false));
+                    }
+                    //autresCases.addAll(motPose.getCasesXPosition(numAxe));
+
+                } else if (yAxe) {
+                    int nbFois2 = nbMulti(3, casePoses);
+                    int nbFois3 = nbMulti(4, casePoses);
+                    //ON COMPTE LES POINTS
+
+                    ArrayList<Mot> motEnX = new ArrayList<Mot>();
+                    Iterator<Gcase> itCasesPoses = casePoses.iterator();
+                    while (itCasesPoses.hasNext()) {
+                        Gcase casePose = itCasesPoses.next();
+                        ArrayList<Gcase> autreCasesMot = new ArrayList<Gcase>();
+                        ArrayList<Gcase> casesAdd = new ArrayList<Gcase>();
+                        casesAdd.add(casePose);
+                        ArrayList<Integer> suite = new ArrayList<Integer>();
+                        suite.add(casePose.getPositionY());
+                        //NOMBRES DE LA SUITE
+                        motEnX = searchMotXPosition(casePose.getPositionX());
+                        if (motEnX.size() > 0) {
+                            //POUR CHACUN DE CES MOTS
+                            Iterator<Mot> itAutresMots = motEnX.iterator();
+                            while (itAutresMots.hasNext()) {
+                                Mot autreMotPose = itAutresMots.next();
+                                autreCasesMot.addAll(autreMotPose.getCasesXPosition(casePose.getPositionX()));
+                            }
+
+                            for (int i = 0; i < autreCasesMot.size(); i++) {
+                                Iterator<Gcase> itAutresCases = autreCasesMot.iterator();
+                                //POUR CHAQUE CASE DE CE MOT
+                                while (itAutresCases.hasNext()) {
+                                    Gcase autreCase = itAutresCases.next();
+                                    if (!casesAdd.contains(autreCase)) {
+                                        suite.add(autreCase.getPositionY());
+                                        if (suiteAxe(suite)) {
+                                            //LA SUITE EST OK
+                                            casesAdd.add(autreCase);
+
+                                        } else {
+                                            suite.remove(Integer.valueOf(autreCase.getPositionY()));
+                                        }
+                                    }
+                                }
+                            }
+                            if (casesAdd.size() > 1) {
+                                mots.add(extraireMot(casesAdd, suite, false));
+
+                            }
+                        }
+                    }
+                    System.out.println(mots);
+
+                    int autresCasesPoints = 0;
+                    ArrayList<Gcase> autresCases = new ArrayList<Gcase>();
+                    int numAxe = lesY.get(0);
+                    //ON RECUPERE LES LETTRES POSEES SUR LE MEME AXE
+                    ArrayList<Mot> motEnY = searchMotYPosition(numAxe);
+                    Iterator<Mot> itMots = motEnY.iterator();
+                    while (itMots.hasNext()) {
+                        //POUR CHAQUE MOT AYANT UNE CASE DANS L'AXE DU MOT
+                        Mot motPose = itMots.next();
+                        autresCases.addAll(motPose.getCasesYPosition(numAxe));
+
+                        //CETTE BOUCLE ASSURE QUELLES LETTRES SONT A AJOUTER
+                        for (int i = 0; i < autresCases.size(); i++) {
+                            Iterator<Gcase> itAutresCases = autresCases.iterator();
+                            while (itAutresCases.hasNext()) {
+                                Gcase autreCase = itAutresCases.next();
+
+                                if (!casePoses.contains(autreCase)) {
+                                    lesX.add(autreCase.getPositionX());
+                                    //ON VERIFIE SI LA SUITE EST TJ OK POUR CHAQUE CASE
+                                    if (suiteAxe(lesX)) {
+                                        //LA SUITE EST OK
+                                        casePoses.add(autreCase);
+                                        autresCasesPoints += autreCase.getLettre().getLettre().getValue();
+                                    } else {
+                                        lesX.remove(Integer.valueOf(autreCase.getPositionX()));
+                                    }
+                                }
+
+                            }
+                        }
+
+                        if (suiteAxe(lesX)) {
+                            motCases = new Mot(casePoses);
+                            mots.add(extraireMot(casePoses, lesX, true));
+                            if (nbFois2 > 0) {
+                                points = points + autresCasesPoints * nbFois2 * 2;
+                            } else if (nbFois3 > 0) {
+                                points = points + autresCasesPoints * nbFois3 * 3;
+                            }
+                            System.out.println("MOT AXE : " + extraireMot(casePoses, lesX, true));
+
+                        }
+
+                    }
+                }
+
+            }
+
+            //VERIFICATION MOT COLLE
+            boolean syntaxeMots = true;
+            if (mots.isEmpty()) {
+                syntaxeMots = false;
+            }
+            if (firstMot) {
+                if (mots.size() > 0) {
+                    if (!dictionnaire.contains(mots.get(0))) {
+                        syntaxeMots = false;
+                    }
+                } else {
+                    syntaxeMots = false;
+                }
+
+            } else {
+                Iterator<String> itMots = mots.iterator();
+                while (itMots.hasNext()) {
+                    String mot = itMots.next();
+                    if (syntaxeMots) {
+                        if (!dictionnaire.contains(mot)) {
+                            syntaxeMots = false;
+                        }
+                    }
+
+                }
+            }
+
+            if (syntaxeMots) {
+                System.out.println("MOT VALIDE");
+                // /!\NOMBRE DE CASES X2 X3
+                int nbFois2 = nbMulti(3, casePoses);
+                int nbFois3 = nbMulti(4, casePoses);
+                //ON COMPTE LES POINTS
+                if (nbFois2 > 0) {
+                    points = points * nbFois2 * 2;
+                } else if (nbFois3 > 0) {
+                    points = points * nbFois3 * 3;
+                }
+
+                if (casePoses.size() == 7) {
+                    points += 50;
+                }
+                gg.getJoueur().addPoints(points);
+                System.out.println("POINTS DU COUP :" + points);
+                lesMots.add(motCases);
+                gg.enleverLettresChevalet(lesLettres);
+                gg.getJoueur().piocher(sac);
+                gg.ajouterLettresChevalet();
+                gg.viderCasesPoses();
+                plateforme.nextJoueur();
+                if (firstMot) {
+                    firstMot = false;
+                }
+
+            }
+
+        }
+    }
+    
+    class changeLettresAction implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            Joueur j=playSpace().getJoueur();
+            ArrayList<Lettre> lettresChevalet=j.enleverToutesLesLettres();
+            ArrayList<Lettre> newLettres=sac.changerLettres(lettresChevalet);
+            ArrayList<Glettre> move=new ArrayList<Glettre>();
+            ArrayList<Glettre> add=new ArrayList<Glettre>();
+            Iterator<Lettre> it1=lettresChevalet.iterator();
+            while(it1.hasNext()){
+                move.add(new Glettre(it1.next()));
+            }
+            Iterator<Lettre> it2=newLettres.iterator();
+            while(it2.hasNext()){
+                move.add(new Glettre(it2.next()));
+            }
+            System.out.println("LETTRES CHEVALET : \n"+lettresChevalet);
+            System.out.println("LETTRES NOUVELLES : \n"+newLettres);
+            j.ajouterLettres(newLettres);
+            playSpace().changerLettres(move, add);
+            playSpace().ajouterLettresChevalet();
+            System.out.println("NOUVELLES LETTRES CHEVALET : \n"+j.getLesLettres());
+        }
+        
+    }
+    
     public void addJoueurs(ArrayList<Joueur> lj) {
         this.lesJoueurs = lj;
         this.plateforme.addJoueurs(lj);
@@ -63,130 +562,10 @@ public class Ggame extends JPanel {
             ///scores.add(new JLabel(j.getNom()+" - Points : "+j.getPoints()));
         }
         //this.add(scores);
-        this.valideMotButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                //VALIDATION DU MOT
-                GspaceGamer gg = playSpace();
-                ArrayList<Glettre> lesLettres = new ArrayList<Glettre>();
-                ArrayList<Integer> lesX = new ArrayList<Integer>();
-                ArrayList<Integer> lesY = new ArrayList<Integer>();
-                //ON RECUPERE LES X ET LES Y
-                ArrayList<Gcase> casePoses = gg.getCasePoses();
-                Iterator<Gcase> it = casePoses.iterator();
-                String mot = "";
-                Mot motCases = null;
-                int points = 0;
-                int maxX = 0;
-                int maxY = 0;
-                while (it.hasNext()) {
-                    Gcase c = it.next();
-                    //GESTION JOKER A RAJOUTER ICI
-                    lesLettres.add(c.getLettre());
-                    points += c.compterPoints();
-                    lesX.add(c.getPositionX());
-                    if (c.getPositionX() > maxX) {
-                        maxX = c.getPositionX();
-                    }
-                    lesY.add(c.getPositionY());
-                    if (c.getPositionY() > maxY) {
-                        maxY = c.getPositionY();
-                    }
-                }
-                boolean xAxe = sameAxe(lesX);
-                boolean yAxe = sameAxe(lesY);
-
-                if (firstMot) {
-                    //DANS CE CAS ON NE REGARDE PAS LES AUTRES CASES DU PLATEAU
-                    if (xAxe) {
-                        if (suiteAxe(lesY)) {
-                            mot = extraireMot(casePoses, lesY, false);
-                        }
-                    } else if (yAxe) {
-                        if (suiteAxe(lesX)) {
-                            mot = extraireMot(casePoses, lesX, true);
-                        }
-                    }
-                    motCases = new Mot(casePoses);
-                } else {
-                    //CHERCHER LES CASES SE RAJOUTANT AU MOT
-                    if (xAxe) {
-                        ArrayList<Gcase> autresCases = new ArrayList<Gcase>();
-                        int numAxe = lesX.get(0);
-                        ArrayList<Mot> motEnX = searchMotXPosition(numAxe);
-                        Iterator<Mot> itMots = motEnX.iterator();
-                        while (itMots.hasNext()) {
-                            //POUR CHAQUE MOT AYANT UNE CASE DANS L'AXE DU MOT
-                            Mot motPose = itMots.next();
-                            Iterator<Gcase> itCase = motPose.getCasesXPosition(numAxe).iterator();
-                            while (itCase.hasNext()) {
-                                //ON VERIFIE SI LA SUITE EST TJ OK POUR CHAQUE CASE
-                                Gcase autreCase = itCase.next();
-                                lesY.add(autreCase.getPositionY());
-                                if (suiteAxe(lesY)) {
-                                    //LA SUITE EST OK
-                                    if (autreCase.getPositionY() > maxY) {
-                                        autresCases.add(autreCase);
-                                        
-                                    }
-                                    else{
-                                        autresCases.add(autreCase);
-                                    }
-                                    
-                                }
-                                
-                            }
-                            if (suiteAxe(lesY)) {
-                                    //LA SUITE EST OK
-//                                    if (autreCase.getPositionY() > maxY) {
-//                                        autresCases.add(autreCase);
-//                                        
-//                                    }
-//                                    else{
-//                                        autresCases.add(autreCase);
-//                                    }
-                                    
-                                }
-                            //autresCases.addAll(motPose.getCasesXPosition(numAxe));
-
-                        }
-
-                    }
-                }
-
-                System.out.println("LE MOT CASE : " + motCases);
-
-                //VERIFICATION MOT COLLE
-                System.out.println(mot);
-                if (dictionnaire.contains(mot)) {
-                    System.out.println("MOT VALIDE");
-                    // /!\NOMBRE DE CASES X2 X3
-                    int nbFois2 = nbMulti(3, casePoses);
-                    int nbFois3 = nbMulti(4, casePoses);
-                    //ON COMPTE LES POINTS
-                    if (nbFois2 > 0) {
-                        points = points * nbFois2 * 2;
-                    } else if (nbFois3 > 0) {
-                        points = points * nbFois3 * 3;
-                    }
-
-                    if (casePoses.size() == 7) {
-                        points += 50;
-                    }
-                    gg.getJoueur().addPoints(points);
-                    lesMots.add(motCases);
-                    gg.enleverLettresChevalet(lesLettres);
-                    gg.getJoueur().piocher(sac);
-                    gg.ajouterLettresChevalet();
-                    gg.viderCasesPoses();
-                    plateforme.nextJoueur();
-                    firstMot = false;
-                }
-
-            }
-
-        });
+        JButton changeLettres=new JButton("CHANGER LETTRES");
+        changeLettres.addActionListener(new changeLettresAction());
+        this.add(changeLettres);
+        this.valideMotButton.addActionListener(new valideButtonAction());
         this.add(valideMotButton);
     }
 
@@ -202,6 +581,18 @@ public class Ggame extends JPanel {
         return m;
     }
 
+    public ArrayList<Mot> searchMotYPosition(int y) {
+        ArrayList<Mot> m = new ArrayList<Mot>();
+        Iterator<Mot> it = lesMots.iterator();
+        while (it.hasNext()) {
+            Mot motPose = it.next();
+            if (motPose.contientPositionY(y)) {
+                m.add(motPose);
+            }
+        }
+        return m;
+    }
+
     private int nbMulti(int r, ArrayList<Gcase> cases) {
         int nb = 0;
         Iterator<Gcase> it = cases.iterator();
@@ -210,8 +601,21 @@ public class Ggame extends JPanel {
             if (c.getRegle() == r) {
                 nb++;
             }
+            if (r == 2 && c.getRegle() == 5) {
+                nb++;
+            }
         }
         return nb;
+    }
+
+    private int cumulPointsLettres(ArrayList<Gcase> gc) {
+        int points = 0;
+        Iterator<Gcase> it = gc.iterator();
+        while (it.hasNext()) {
+            Gcase c = it.next();
+            points += c.getLettre().getLettre().getValue();
+        }
+        return points;
     }
 
     private String extraireMot(ArrayList<Gcase> lesCases, ArrayList<Integer> axe, boolean xy) {
@@ -372,6 +776,11 @@ public class Ggame extends JPanel {
         }
         //System.out.println(dico.size());
         return dico;
+    }
+
+    private Gcase creerCaseMilieu() {
+        Case c = new Case(7, 7, 5);
+        return new Gcase(c);
     }
 
 }

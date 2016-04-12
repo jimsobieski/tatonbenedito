@@ -31,6 +31,13 @@ public class Gcase extends JButton implements ActionListener{
         
     }
     
+    public boolean equals(Gcase ca){
+        if(ca.getCasePlateau().equals(casePlateau)){
+            return true;
+        }
+        return false;
+    }
+    
     public int compterPoints(){
         int p=this.getLettre().getLettre().getValue();
         if(this.regle==1){

@@ -64,7 +64,9 @@ public class GspaceGamer extends JPanel implements ActionListener{
     }
         
         
-    
+    public void changerLettres(ArrayList<Glettre> move, ArrayList<Glettre> add){
+        chevalet.changerLettres(move, add);
+    }
     
     
     public Glettre getLettreClicke(){

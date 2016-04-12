@@ -40,7 +40,7 @@ public class Case {
 	}
 	
         public boolean equals(Case c){
-            if(this.getPositionX()==c.getPositionX() && this.getPositionY()==c.getPositionY() && this.getNumRegle()==c.getNumRegle()){
+            if(this.getPositionX()==c.getPositionX() && this.getPositionY()==c.getPositionY()){
                 return true;
             }
             return false;

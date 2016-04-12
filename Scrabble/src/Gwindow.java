@@ -58,8 +58,6 @@ public class Gwindow extends JFrame implements ActionListener {
                             }
                         }
                     }
-
-//                            if(lettreEnMain!=)
                 }
             });
             gl.add(casePlateau);

@@ -21,7 +21,7 @@ public class GstartGame extends JPanel implements ActionListener{
     
     public GstartGame(){
         super();
-        this.setLayout(new GridLayout(5,0,5,40));
+        this.setLayout(new GridLayout(6,0,50,50));
         JLabel titre1=new JLabel("Nom des joueurs");
         this.add(titre1);
         this.lesJoueurs=new ArrayList<JTextField>();
