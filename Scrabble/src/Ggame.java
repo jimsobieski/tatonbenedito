@@ -37,7 +37,7 @@ public class Ggame extends JPanel {
 
     public Ggame() {
         super();
-        this.content = new GridLayout(4, 0);
+        this.content = new GridLayout(6, 0);
         this.setLayout(this.content);
         this.sac = new Sac();
         this.lesMots = new ArrayList<Mot>();
@@ -49,12 +49,11 @@ public class Ggame extends JPanel {
             Logger.getLogger(Ggame.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.plateforme = new GspaceGamers();
-        
-        
+
     }
 
-    
     class valideButtonAction implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent ae) {
 
@@ -71,6 +70,7 @@ public class Ggame extends JPanel {
             int points = 0;
             int maxX = 0;
             int maxY = 0;
+            boolean motColle = false;
             while (it.hasNext()) {
                 Gcase c = it.next();
                 //GESTION JOKER A RAJOUTER ICI
@@ -131,6 +131,7 @@ public class Ggame extends JPanel {
                 }
 
             } else {
+                
                 //SI UNE SEULE LETTRE EST POSE
                 if (casePoses.size() == 1) {
                     Gcase c = casePoses.get(0);
@@ -159,6 +160,9 @@ public class Ggame extends JPanel {
                                 if (!casesAdd.contains(autreCase)) {
                                     suite.add(autreCase.getPositionY());
                                     if (suiteAxe(suite)) {
+                                        if (!motColle) {
+                                            motColle = true;
+                                        }
                                         //LA SUITE EST OK
                                         casesAdd.add(autreCase);
                                     } else {
@@ -207,6 +211,9 @@ public class Ggame extends JPanel {
                                 if (!casesAdd.contains(autreCase)) {
                                     suite.add(autreCase.getPositionX());
                                     if (suiteAxe(suite)) {
+                                        if (!motColle) {
+                                            motColle = true;
+                                        }
                                         //LA SUITE EST OK
                                         casesAdd.add(autreCase);
                                     } else {
@@ -282,6 +289,9 @@ public class Ggame extends JPanel {
                                     if (!casesAdd.contains(autreCase)) {
                                         suite.add(autreCase.getPositionX());
                                         if (suiteAxe(suite)) {
+                                            if (!motColle) {
+                                                motColle = true;
+                                            }
                                             //LA SUITE EST OK
                                             casesAdd.add(autreCase);
                                         } else {
@@ -340,6 +350,9 @@ public class Ggame extends JPanel {
                                 lesY.add(autreCase.getPositionY());
                                 //ON VERIFIE SI LA SUITE EST TJ OK POUR CHAQUE CASE
                                 if (suiteAxe(lesY)) {
+                                    if (!motColle) {
+                                        motColle = true;
+                                    }
                                     //LA SUITE EST OK
                                     casePoses.add(autreCase);
                                     autresCasesPoints += autreCase.getLettre().getLettre().getValue();
@@ -369,7 +382,6 @@ public class Ggame extends JPanel {
                 } else if (yAxe) {
                     int nbFois2 = nbMulti(3, casePoses);
                     int nbFois3 = nbMulti(4, casePoses);
-                    //ON COMPTE LES POINTS
 
                     ArrayList<Mot> motEnX = new ArrayList<Mot>();
                     Iterator<Gcase> itCasesPoses = casePoses.iterator();
@@ -398,6 +410,9 @@ public class Ggame extends JPanel {
                                     if (!casesAdd.contains(autreCase)) {
                                         suite.add(autreCase.getPositionY());
                                         if (suiteAxe(suite)) {
+                                            if (!motColle) {
+                                                motColle = true;
+                                            }
                                             //LA SUITE EST OK
                                             casesAdd.add(autreCase);
 
@@ -436,6 +451,9 @@ public class Ggame extends JPanel {
                                     lesX.add(autreCase.getPositionX());
                                     //ON VERIFIE SI LA SUITE EST TJ OK POUR CHAQUE CASE
                                     if (suiteAxe(lesX)) {
+                                        if(!motColle){
+                                            motColle=true;
+                                        }
                                         //LA SUITE EST OK
                                         casePoses.add(autreCase);
                                         autresCasesPoints += autreCase.getLettre().getLettre().getValue();
@@ -464,12 +482,13 @@ public class Ggame extends JPanel {
 
             }
 
-            //VERIFICATION MOT COLLE
+            //VERIFICATION SYNTAXE
             boolean syntaxeMots = true;
             if (mots.isEmpty()) {
                 syntaxeMots = false;
             }
             if (firstMot) {
+                motColle=true;
                 if (mots.size() > 0) {
                     if (!dictionnaire.contains(mots.get(0))) {
                         syntaxeMots = false;
@@ -491,7 +510,7 @@ public class Ggame extends JPanel {
                 }
             }
 
-            if (syntaxeMots) {
+            if (syntaxeMots && motColle) {
                 System.out.println("MOT VALIDE");
                 // /!\NOMBRE DE CASES X2 X3
                 int nbFois2 = nbMulti(3, casePoses);
@@ -522,51 +541,67 @@ public class Ggame extends JPanel {
 
         }
     }
-    
-    class changeLettresAction implements ActionListener{
+
+    class changeLettresAction implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            Joueur j=playSpace().getJoueur();
-            ArrayList<Lettre> lettresChevalet=j.enleverToutesLesLettres();
-            ArrayList<Lettre> newLettres=sac.changerLettres(lettresChevalet);
-            ArrayList<Glettre> move=new ArrayList<Glettre>();
-            ArrayList<Glettre> add=new ArrayList<Glettre>();
-            Iterator<Lettre> it1=lettresChevalet.iterator();
-            while(it1.hasNext()){
+            Joueur j = playSpace().getJoueur();
+            ArrayList<Lettre> lettresChevalet = j.enleverToutesLesLettres();
+            ArrayList<Lettre> newLettres = sac.changerLettres(lettresChevalet);
+            ArrayList<Glettre> move = new ArrayList<Glettre>();
+            ArrayList<Glettre> add = new ArrayList<Glettre>();
+            Iterator<Lettre> it1 = lettresChevalet.iterator();
+            while (it1.hasNext()) {
                 move.add(new Glettre(it1.next()));
             }
-            Iterator<Lettre> it2=newLettres.iterator();
-            while(it2.hasNext()){
+            Iterator<Lettre> it2 = newLettres.iterator();
+            while (it2.hasNext()) {
                 move.add(new Glettre(it2.next()));
             }
-            System.out.println("LETTRES CHEVALET : \n"+lettresChevalet);
-            System.out.println("LETTRES NOUVELLES : \n"+newLettres);
+            System.out.println("LETTRES CHEVALET : \n" + lettresChevalet);
+            System.out.println("LETTRES NOUVELLES : \n" + newLettres);
             j.ajouterLettres(newLettres);
             playSpace().changerLettres(move, add);
             playSpace().ajouterLettresChevalet();
-            System.out.println("NOUVELLES LETTRES CHEVALET : \n"+j.getLesLettres());
+            System.out.println("NOUVELLES LETTRES CHEVALET : \n" + j.getLesLettres());
+        }
+
+    }
+    
+    class passerSonTourAction implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            plateforme.nextJoueur();
         }
         
     }
-    
+
     public void addJoueurs(ArrayList<Joueur> lj) {
         this.lesJoueurs = lj;
         this.plateforme.addJoueurs(lj);
         this.add(this.plateforme);
-        this.valideMotButton = new JButton("VALIDER");
+        this.valideMotButton = new JButton("VALIDER");       
+        
+        this.valideMotButton.addActionListener(new valideButtonAction());
+        this.add(valideMotButton);
+        JButton changeLettres = new JButton("CHANGER CES LETTRES");
+        changeLettres.addActionListener(new changeLettresAction());
+        this.add(changeLettres);
+        
+        JButton passerTour = new JButton("PASSER SON TOUR");
+        passerTour.addActionListener(new passerSonTourAction());
+        this.add(passerTour);
+        
         JPanel scores = new JPanel();
         Iterator<Joueur> it = this.lesJoueurs.iterator();
         while (it.hasNext()) {
+            scores.setLayout(new GridLayout(lj.size(),0));
             Joueur j = it.next();
-            ///scores.add(new JLabel(j.getNom()+" - Points : "+j.getPoints()));
+            scores.add(new JLabel(j.getNom()+" - Points : "+j.getPoints()));
         }
-        //this.add(scores);
-        JButton changeLettres=new JButton("CHANGER LETTRES");
-        changeLettres.addActionListener(new changeLettresAction());
-        this.add(changeLettres);
-        this.valideMotButton.addActionListener(new valideButtonAction());
-        this.add(valideMotButton);
+        this.add(scores);
     }
 
     public ArrayList<Mot> searchMotXPosition(int x) {

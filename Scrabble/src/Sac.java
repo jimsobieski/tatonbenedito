@@ -149,7 +149,6 @@ public class Sac {
 
     public ArrayList<Lettre> piocher(int nbLettres) {
         ArrayList<Lettre> l = new ArrayList<Lettre>();
-        Iterator<Lettre> it = this.getLesLettres().iterator();
         //On choisit des numeros au hasard
         Random rand = new Random();
         HashSet<Integer> tabChoix = new HashSet<Integer>();
@@ -170,19 +169,7 @@ public class Sac {
 
                 }
             }
-        }
-
-        //on recup la lettre a chaque index correspondant aux nb random
-//        while(it.hasNext()){
-//            if(tabChoix.contains(cmp)){
-//                l.add(it.next());
-//                it.remove();
-//            }
-//            else{
-//                it.next();
-//            }
-//            cmp++;
-//        }       
+        }      
         return l;
     }
 

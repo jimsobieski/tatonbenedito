@@ -15,7 +15,6 @@ public class Gcase extends JButton implements ActionListener{
     
     private Case casePlateau;
     private Color color; 
-    private boolean click;
     private Glettre lettre;
     private int regle;
     
@@ -23,7 +22,6 @@ public class Gcase extends JButton implements ActionListener{
         super();
         this.casePlateau=ca;
         this.regle=ca.getNumRegle();
-        this.click=false;
         this.lettre=null;
         this.color=ca.getColor();
         this.setBackground(color);
@@ -106,7 +104,4 @@ public class Gcase extends JButton implements ActionListener{
         return this.regle;
     }
 
-    public boolean isClick() {
-        return click;
-    }
 }
