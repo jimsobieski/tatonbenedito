@@ -33,6 +33,7 @@ public class Ggame extends JPanel {
     private ArrayList<Mot> lesMots;
     private Sac sac;
     private JButton valideMotButton;
+    private JPanel scores;
     private boolean firstMot;
 
     public Ggame() {
@@ -42,6 +43,7 @@ public class Ggame extends JPanel {
         this.sac = new Sac();
         this.lesMots = new ArrayList<Mot>();
         this.lesJoueurs = null;
+        this.scores = null;
         this.firstMot = true;
         try {
             this.dictionnaire = creerDico();
@@ -131,7 +133,7 @@ public class Ggame extends JPanel {
                 }
 
             } else {
-                
+
                 //SI UNE SEULE LETTRE EST POSE
                 if (casePoses.size() == 1) {
                     Gcase c = casePoses.get(0);
@@ -451,8 +453,8 @@ public class Ggame extends JPanel {
                                     lesX.add(autreCase.getPositionX());
                                     //ON VERIFIE SI LA SUITE EST TJ OK POUR CHAQUE CASE
                                     if (suiteAxe(lesX)) {
-                                        if(!motColle){
-                                            motColle=true;
+                                        if (!motColle) {
+                                            motColle = true;
                                         }
                                         //LA SUITE EST OK
                                         casePoses.add(autreCase);
@@ -488,7 +490,7 @@ public class Ggame extends JPanel {
                 syntaxeMots = false;
             }
             if (firstMot) {
-                motColle=true;
+                motColle = true;
                 if (mots.size() > 0) {
                     if (!dictionnaire.contains(mots.get(0))) {
                         syntaxeMots = false;
@@ -525,18 +527,20 @@ public class Ggame extends JPanel {
                 if (casePoses.size() == 7) {
                     points += 50;
                 }
-                gg.getJoueur().addPoints(points);
+
                 System.out.println("POINTS DU COUP :" + points);
                 lesMots.add(motCases);
                 gg.enleverLettresChevalet(lesLettres);
                 gg.getJoueur().piocher(sac);
                 gg.ajouterLettresChevalet();
                 gg.viderCasesPoses();
-                plateforme.nextJoueur();
                 if (firstMot) {
                     firstMot = false;
+                    points = points * 2;
                 }
-
+                gg.getJoueur().addPoints(points);
+                updateScores();
+                plateforme.nextJoueur();
             }
 
         }
@@ -568,40 +572,49 @@ public class Ggame extends JPanel {
         }
 
     }
-    
-    class passerSonTourAction implements ActionListener{
+
+    class passerSonTourAction implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
             plateforme.nextJoueur();
         }
-        
+
     }
 
     public void addJoueurs(ArrayList<Joueur> lj) {
         this.lesJoueurs = lj;
         this.plateforme.addJoueurs(lj);
         this.add(this.plateforme);
-        this.valideMotButton = new JButton("VALIDER");       
-        
+        this.valideMotButton = new JButton("VALIDER");
+
         this.valideMotButton.addActionListener(new valideButtonAction());
         this.add(valideMotButton);
-        JButton changeLettres = new JButton("CHANGER CES LETTRES");
-        changeLettres.addActionListener(new changeLettresAction());
-        this.add(changeLettres);
-        
+//        JButton changeLettres = new JButton("CHANGER CES LETTRES");
+//        changeLettres.addActionListener(new changeLettresAction());
+//        this.add(changeLettres);
+
         JButton passerTour = new JButton("PASSER SON TOUR");
         passerTour.addActionListener(new passerSonTourAction());
         this.add(passerTour);
-        
-        JPanel scores = new JPanel();
+
+        scores = new JPanel();
         Iterator<Joueur> it = this.lesJoueurs.iterator();
         while (it.hasNext()) {
-            scores.setLayout(new GridLayout(lj.size(),0));
+            scores.setLayout(new GridLayout(lj.size(), 0));
             Joueur j = it.next();
-            scores.add(new JLabel(j.getNom()+" - Points : "+j.getPoints()));
+            scores.add(new JLabel(j.getNom() + " - Points : " + j.getPoints()));
         }
         this.add(scores);
+    }
+
+    public void updateScores() {
+        scores.removeAll();
+        Iterator<Joueur> it = this.lesJoueurs.iterator();
+        while (it.hasNext()) {
+            Joueur j = it.next();
+            scores.add(new JLabel(j.getNom() + " - Points : " + j.getPoints()));
+        }
     }
 
     public ArrayList<Mot> searchMotXPosition(int x) {
@@ -796,6 +809,7 @@ public class Ggame extends JPanel {
                 cmp2++;
                 if (ligne.length() < 16) {
                     if (!ligne.contains("-")) {
+                        ligne=enleverAccents(ligne);
                         cmp++;
                         dico.add(ligne);
                         fw.write(ligne + "\n");
@@ -811,6 +825,46 @@ public class Ggame extends JPanel {
         }
         //System.out.println(dico.size());
         return dico;
+    }
+
+    public String enleverAccents(String mot) {
+        //variable contenant le mot sans accent
+        String s = "";
+        for (int i=0;i<mot.length();i++) {
+            //pour chaque lettre du mot
+            String lettre=String.valueOf(mot.charAt(i));
+            //si cette lettre  est l'une des suivante
+            switch(lettre){
+                case "à": s+="a";
+                    break;
+                case "ä": s+="a";
+                    break;
+                case "â": s+="a";
+                    break;
+                case "é": s+="e";
+                    break;
+                case "è": s+="e";
+                    break;
+                case "ê": s+="e";
+                    break;
+                case "ë": s+="e";
+                    break;
+                case "ï": s+="i";
+                    break;
+                case "î": s+="i";
+                    break;
+                case "ù": s+="u";
+                    break;
+                case "û": s+="u";
+                    break;
+                case "ü": s+="u";
+                    break;
+                //si c'est aucune d'entre elle on ajoute celle de base
+                default: s+=lettre;
+            }
+            
+        }
+        return s;
     }
 
     private Gcase creerCaseMilieu() {

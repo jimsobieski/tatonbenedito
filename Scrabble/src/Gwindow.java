@@ -11,7 +11,7 @@ import javax.swing.JFrame;
  *
  * @author JimSobieski
  */
-public class Gwindow extends JFrame implements ActionListener {
+public class Gwindow extends JFrame {
 
     private Plateau plateau;
     private Gmenu menu;
@@ -27,39 +27,7 @@ public class Gwindow extends JFrame implements ActionListener {
             Case c = it.next();
             Gcase casePlateau = new Gcase(c);
             //CASE ACTIONS
-            casePlateau.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    //LETTRE EN MAIN ?
-                    Glettre lettreEnMain = menu.getGame().getLettreEnMain();
-                    GspaceGamer gg = menu.getGame().playSpace();
-                    if (lettreEnMain != null) {//OUI
-                        if (!casePlateau.contientLettre()) {
-                            //ON AJOUTE LA LETTRE SUR LE PLATEAU
-                            casePlateau.poserLettre(lettreEnMain);
-                            gg.masquerLettreChevalet(lettreEnMain);
-                            gg.addCasePose(casePlateau);
-                            gg.poserLettre();
-                            //gg.afficherCasePoses();
-                        }
-
-                    } else {
-                        if (casePlateau.contientLettre()) {
-                            //ON ENLEVE LA LETTRE DE LA CASE
-                            Glettre lettre = casePlateau.getLettre();
-                            Iterator<Glettre> it = gg.getChevalet().getLesLettres().iterator();
-                            while (it.hasNext()) {
-                                Glettre gl = it.next();
-                                if (lettre.equals(gl)) {
-                                    gl.setVisible(true);
-                                    casePlateau.enleverLettrePlateau();
-                                    gg.removeCasePose(casePlateau);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            casePlateau.addActionListener(new casePlateauAction(casePlateau));
             gl.add(casePlateau);
         }
         this.gPlateau = new Gplateau(gl);
@@ -75,15 +43,52 @@ public class Gwindow extends JFrame implements ActionListener {
         this.setSize(1200, 800);
         this.setResizable(false);
     }
+    
+    class casePlateauAction implements ActionListener{
+        
+        private Gcase casePlateau;
+        
+        public casePlateauAction(Gcase c){
+            casePlateau=c;
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+                    //LETTRE EN MAIN ?
+                    Glettre lettreEnMain = menu.getGame().getLettreEnMain();
+                    GspaceGamer gg = menu.getGame().playSpace();
+                    if (lettreEnMain != null) {//OUI
+                        if (!casePlateau.contientLettre()) {
+                            //ON AJOUTE LA LETTRE SUR LE PLATEAU
+                            casePlateau.poserLettre(lettreEnMain);
+                            gg.masquerLettreChevalet(lettreEnMain);
+                            //AJOUT A LA LISTE DES CASES POSES
+                            gg.addCasePose(casePlateau);
+                            gg.poserLettre();
+                        }
+                    } else {
+                        if (casePlateau.contientLettre()) {
+                            //ON ENLEVE LA LETTRE DE LA CASE
+                            Glettre lettre = casePlateau.getLettre();
+                            Iterator<Glettre> it = gg.getChevalet().getLesLettres().iterator();
+                            //SEULEMENT SI ELLE N'EST PAS DEJA POSE
+                            while (it.hasNext()) {
+                                Glettre gl = it.next();
+                                if (lettre.equals(gl)) {
+                                    gl.setVisible(true);
+                                    casePlateau.enleverLettrePlateau();
+                                    gg.removeCasePose(casePlateau);
+                                }
+                            }
+                        }
+                    }
+                }       
+    }
 
     public Plateau getPlateau() {
         return this.plateau;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-
-    }
 
     public Gmenu getMenu() {
         return menu;
